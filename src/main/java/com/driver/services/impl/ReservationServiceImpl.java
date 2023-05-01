@@ -42,21 +42,37 @@ public class ReservationServiceImpl implements ReservationService {
         boolean available = false;
         for(Spot spot : parkingLot.getSpotList()){
 
-            if(spot.getPricePerHour() < min && spot.isOccupied() == false  ){
-                min = spot.getPricePerHour();
-                newSpot = spot;
+            if(spot.isOccupied() == false){
+                if(spot.getSpotType() == SpotType.TWO_WHEELER){
+                    if(numberOfWheels <= 2){
+                        if(spot.getPricePerHour() < min){
+                            min = spot.getPricePerHour();
+                            newSpot = spot;
+                        }
+                    }
+                } else if (spot.getSpotType() == SpotType.FOUR_WHEELER) {
+                    if (numberOfWheels <= 4){
+                        if (spot.getPricePerHour() < min){
+                            min = spot.getPricePerHour();
+                            newSpot = spot;
+                        }
+                    }
+
+                }
+                else {
+                    if (numberOfWheels > 4) {
+                        if (spot.getPricePerHour() < min) {
+                            min = spot.getPricePerHour();
+                            newSpot = spot;
+                        }
+                    }
+                }
             }
         }
-            if(newSpot.getSpotType() == SpotType.FOUR_WHEELER && numberOfWheels > 2 && numberOfWheels<=4){
-                available = true;
-            } else if (newSpot.getSpotType() == SpotType.TWO_WHEELER && numberOfWheels <=2) {
-                available = true;
-            } else if (newSpot.getSpotType()==SpotType.OTHERS && numberOfWheels > 4) {
-                available = true;
-            }
-        if (available == false){
+        if (newSpot == null){
             throw new Exception("Cannot make reservation");
         }
+
         newSpot.setOccupied(true);
         Reservation reservation = new Reservation();
         reservation.setUser(user);
@@ -64,6 +80,8 @@ public class ReservationServiceImpl implements ReservationService {
         reservation.setSpot(newSpot);
         newSpot.getReservationList().add(reservation);
         user.getReservationList().add(reservation);
+
+        userRepository3.save(user);
 
         spotRepository3.save(newSpot);
 
