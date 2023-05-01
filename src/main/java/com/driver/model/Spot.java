@@ -12,7 +12,7 @@ public class Spot {
     private  int id;
    @Enumerated(EnumType.STRING)
     private SpotType spotType;
-    @Column(unique = true)
+
     private int pricePerHour;
 
     private  boolean occupied;
@@ -61,7 +61,7 @@ public class Spot {
         this.pricePerHour = pricePerHour;
     }
 
-    public boolean isOccupied() {
+    public boolean getOccupied() {
         return occupied;
     }
 
